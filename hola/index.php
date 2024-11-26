@@ -4,7 +4,6 @@ require_once 'ReportBuilder.php';
 require_once 'SalesReportFacade.php';
 require_once 'ReportStrategy.php';
 
-require_once 'HtmlReportStrategy.php';
 
 
 $database = new Database();
