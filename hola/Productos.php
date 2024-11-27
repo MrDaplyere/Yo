@@ -2,7 +2,22 @@
 require_once 'Database.php';
 require_once 'ReportBuilder.php';
 require_once 'SalesReportFacade.php'; // Incluir la fachada
+$database = new Database();
+$conn = $database->getConnection();
 
+try {
+    $query = "SHOW TABLES";
+    $stmt = $conn->prepare($query);
+    $stmt->execute();
+    $tables = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    echo "Tablas en la base de datos:<br>";
+    foreach ($tables as $table) {
+        echo $table[array_keys($table)[0]] . "<br>";
+    }
+} catch (PDOException $e) {
+    echo "Error al listar las tablas: " . $e->getMessage();
+}
 // Crear la conexión a la base de datos
 $database = new Database();
 $db = $database->getConnection();
