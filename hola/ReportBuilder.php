@@ -1,9 +1,9 @@
 <?php
 class ReportBuilder {
     private $conn;
-    private $salesTable = "ventas";
-    private $clientsTable = "Clientes";
-    private $productsTable = "Productos";
+    private $salesTable = "ventas";      // En minúsculas
+    private $clientsTable = "clientes"; // En minúsculas
+    private $productsTable = "productos"; // En minúsculas
 
     public function __construct($db) {
         $this->conn = $db;
@@ -17,10 +17,7 @@ class ReportBuilder {
         $stmt->bindParam(':producto', $producto);
         $stmt->bindParam(':fecha', $fecha);
 
-        if ($stmt->execute()) {
-            return true;
-        }
-        return false;
+        return $stmt->execute();
     }
 
     public function deleteSale($id_venta) {
@@ -28,10 +25,7 @@ class ReportBuilder {
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':id_venta', $id_venta);
 
-        if ($stmt->execute()) {
-            return true;
-        }
-        return false;
+        return $stmt->execute();
     }
 
     public function updateSale($id_venta, $cliente, $producto, $fecha) {
@@ -42,10 +36,7 @@ class ReportBuilder {
         $stmt->bindParam(':producto', $producto);
         $stmt->bindParam(':fecha', $fecha);
 
-        if ($stmt->execute()) {
-            return true;
-        }
-        return false;
+        return $stmt->execute();
     }
 
     public function buildSalesReport() {
@@ -62,11 +53,8 @@ class ReportBuilder {
         $stmt->bindParam(':nombre', $nombre);
         $stmt->bindParam(':telefono', $telefono);
         $stmt->bindParam(':revendedor', $revendedor);
-        
-        if ($stmt->execute()) {
-            return true;
-        }
-        return false;
+
+        return $stmt->execute();
     }
 
     public function deleteClient($id_cliente) {
@@ -74,10 +62,7 @@ class ReportBuilder {
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':id_cliente', $id_cliente);
 
-        if ($stmt->execute()) {
-            return true;
-        }
-        return false;
+        return $stmt->execute();
     }
 
     public function updateClient($id_cliente, $nombre, $telefono, $revendedor) {
@@ -88,10 +73,7 @@ class ReportBuilder {
         $stmt->bindParam(':telefono', $telefono);
         $stmt->bindParam(':revendedor', $revendedor);
 
-        if ($stmt->execute()) {
-            return true;
-        }
-        return false;
+        return $stmt->execute();
     }
 
     public function buildClientsReport() {
@@ -109,39 +91,30 @@ class ReportBuilder {
         $stmt->bindParam(':precio', $precio);
         $stmt->bindParam(':revendedor', $revendedor);
 
-        if ($stmt->execute()) {
-            return true;
-        }
-        return false;
+        return $stmt->execute();
     }
 
     public function deleteProduct($id_producto) {
-        $query = "DELETE FROM " . $this->productsTable . " WHERE id_producto = :id_producto"; // Corrección en id_producto
+        $query = "DELETE FROM " . $this->productsTable . " WHERE id_producto = :id_producto";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':id_producto', $id_producto);
 
-        if ($stmt->execute()) {
-            return true;
-        }
-        return false;
+        return $stmt->execute();
     }
 
     public function updateProduct($id_producto, $nombreProducto, $precio, $revendedor) {
-        $query = "UPDATE " . $this->productsTable . " SET NombreProducto = :nombreProducto, Precio = :precio, Revendedor = :revendedor WHERE id_producto = :id_producto"; // Corrección en id_producto
+        $query = "UPDATE " . $this->productsTable . " SET NombreProducto = :nombreProducto, Precio = :precio, Revendedor = :revendedor WHERE id_producto = :id_producto";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':id_producto', $id_producto);
         $stmt->bindParam(':nombreProducto', $nombreProducto);
         $stmt->bindParam(':precio', $precio);
         $stmt->bindParam(':revendedor', $revendedor);
 
-        if ($stmt->execute()) {
-            return true;
-        }
-        return false;
+        return $stmt->execute();
     }
 
     public function buildProductsReport() {
-        $query = "SELECT id_producto, NombreProducto, Precio, Revendedor FROM " . $this->productsTable; // Corrección en id_producto
+        $query = "SELECT id_producto, NombreProducto, Precio, Revendedor FROM " . $this->productsTable;
         $stmt = $this->conn->prepare($query);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
