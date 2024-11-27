@@ -4,8 +4,7 @@ require_once 'ReportBuilder.php';
 require_once 'SalesReportFacade.php';
 require_once 'ReportStrategy.php';
 require_once 'JSONReportStrategy.php';
-require_once 'PDFReportStrategy.php'; 
-
+require_once 'PDFReportStrategy.php';
 
 $database = new Database();
 $db = $database->getConnection();
@@ -25,16 +24,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         try {
             $salesReport = $reportFacade->generateSalesReport();
-            
+
             if ($format === 'pdf') {
+                // Establecer cabeceras HTTP para descargar o mostrar el PDF
                 header('Content-Type: application/pdf');
                 header('Content-Disposition: attachment; filename="reporte_ventas.pdf"');
-                echo $salesReport; 
-                exit; 
+
+                // Imprimir el contenido del PDF
+                echo $salesReport;
+                exit; // Termina el script después de enviar el PDF
             }
 
+            // Envío para formatos distintos a PDF
             echo $salesReport;
-            exit; 
+            exit; // Termina el script después de enviar el reporte
         } catch (Exception $e) {
             echo "Error: " . $e->getMessage();
         }
@@ -44,7 +47,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     elseif (isset($_POST['cliente'], $_POST['producto'], $_POST['fecha'])) {
         $result = $reportFacade->addSale($_POST['cliente'], $_POST['producto'], $_POST['fecha']);
         if ($result) {
+            // Éxito en la inserción
         } else {
+            // Fallo en la inserción
         }
     }
 
@@ -52,7 +57,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     elseif (isset($_POST['update_id'], $_POST['update_cliente'], $_POST['update_producto'], $_POST['update_fecha'])) {
         $result = $reportFacade->updateSale($_POST['update_id'], $_POST['update_cliente'], $_POST['update_producto'], $_POST['update_fecha']);
         if ($result) {
+            // Éxito en la actualización
         } else {
+            // Fallo en la actualización
         }
     }
 
@@ -60,13 +67,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     elseif (isset($_POST['delete_id'])) {
         $result = $reportFacade->removeSale($_POST['delete_id']);
         if ($result) {
+            // Éxito en la eliminación
         } else {
+            // Fallo en la eliminación
         }
     }
 }
 
+// Obtener y mostrar los datos del reporte (HTML por defecto)
 $reportData = $reportFacade->getSalesReport();
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
