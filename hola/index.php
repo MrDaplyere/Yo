@@ -3,9 +3,8 @@ require_once 'Database.php';
 require_once 'ReportBuilder.php';
 require_once 'SalesReportFacade.php';
 require_once 'ReportStrategy.php';
-require_once 'JsonReportStrategy.php';
-require_once 'HtmlReportStrategy.php';
-require_once 'PdfReportStrategy.php'; 
+require_once 'JSONReportStrategy.php';
+require_once 'PDFReportStrategy.php'; 
 
 
 $database = new Database();
