@@ -119,5 +119,14 @@ class ReportBuilder {
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+    // Autocomplete
+public function searchProducts($term) {
+    $query = "SELECT id_producto, NombreProducto FROM " . $this->productsTable . " WHERE NombreProducto LIKE :term LIMIT 10";
+    $stmt = $this->conn->prepare($query);
+    $searchTerm = "%" . $term . "%"; // 
+    $stmt->bindParam(':term', $searchTerm);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
 }
 ?>
