@@ -82,5 +82,11 @@ public function searchClients($term) {
     return $this->reportBuilder->searchClients($term);
 }
 
+        // ------------------------------ INSERTAR VENTA ------------------------------
+    public function insertSale($cliente, $producto) {
+        $fecha = date('Y-m-d H:i:s'); // Fecha actual
+        return $this->addSale($cliente, $producto, $fecha);
+    }
+
 }
 ?>
