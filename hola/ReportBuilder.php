@@ -128,5 +128,14 @@ public function searchProducts($term) {
     $stmt->execute();
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
+public function searchClients($term) {
+    $query = "SELECT id_Cliente, Nombre FROM " . $this->clientsTable . " WHERE Nombre LIKE :term LIMIT 10";
+    $stmt = $this->conn->prepare($query);
+    $searchTerm = "%" . $term . "%";
+    $stmt->bindParam(':term', $searchTerm);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
 }
 ?>
