@@ -1,12 +1,11 @@
 <?php
-include_once 'Database.php';
+include_once 'SalesReportFacade.php';
 
 $response = ['success' => false, 'message' => ''];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $cliente = $_POST['cliente'] ?? '';
     $producto = $_POST['producto'] ?? '';
-    $precio = $_POST['precio'] ?? '';
 
     if (!$cliente || !$producto) {
         $response['message'] = 'Los campos cliente y producto son obligatorios.';
@@ -17,18 +16,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         $database = new Database();
         $db = $database->getConnection();
+        $salesFacade = new SalesReportFacade($db);
 
-        // Preparamos el query de inserción
-        $query = "INSERT INTO ventas (cliente, producto, fecha) VALUES (:cliente, :producto, NOW())";
-        $stmt = $db->prepare($query);
-        $stmt->bindParam(':cliente', $cliente);
-        $stmt->bindParam(':producto', $producto);
-
-        if ($stmt->execute()) {
+        if ($salesFacade->insertSale($cliente, $producto)) {
             $response['success'] = true;
             $response['message'] = 'Venta insertada correctamente.';
         } else {
-            $response['message'] = 'Error al ejecutar la inserción.';
+            $response['message'] = 'Error al insertar la venta.';
         }
     } catch (Exception $e) {
         $response['message'] = 'Error de servidor: ' . $e->getMessage();
