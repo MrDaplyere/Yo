@@ -78,5 +78,9 @@ class SalesReportFacade {
 public function searchProducts($term) {
     return $this->reportBuilder->searchProducts($term);
 }
+public function searchClients($term) {
+    return $this->reportBuilder->searchClients($term);
+}
+
 }
 ?>
