@@ -349,50 +349,45 @@ $reportData = $reportFacade->getSalesReport();
         modal.find('#update_producto').val(producto);
         modal.find('#update_fecha').val(fecha);
     });
-    document.getElementById('producto').addEventListener('input', function() {
-    var term = this.value;
-    
-    if (term.length > 2) { 
-        fetch('autocomplete.php?term=' + term)
-            .then(response => response.json())
-            .then(data => {
-                var productList = document.getElementById('product-list');
-                productList.innerHTML = '';
-                data.forEach(product => {
-                    var div = document.createElement('div');
-                    div.innerText = product.NombreProducto;
-                    div.setAttribute('data-id', product.id_producto);
-                    div.addEventListener('click', function() {
-                        document.getElementById('producto').value = product.NombreProducto;
-                        productList.innerHTML = ''; 
+function setupAutocomplete(inputId, listId, type) {
+    const input = document.getElementById(inputId);
+    const list = document.getElementById(listId);
+
+    input.addEventListener('input', function() {
+        const term = this.value;
+
+        if (term.length > 2) { // Buscar si tiene más de 2 caracteres
+            fetch(`autocomplete.php?term=${term}&type=${type}`)
+                .then(response => response.json())
+                .then(data => {
+                    list.innerHTML = '';
+                    data.forEach(item => {
+                        const div = document.createElement('div');
+                        div.innerText = item.Nombre || item.NombreProducto; // Adaptar según el tipo
+                        div.setAttribute('data-id', item.id_Cliente || item.id_producto);
+                        div.addEventListener('click', function() {
+                            input.value = item.Nombre || item.NombreProducto;
+                            list.innerHTML = ''; // Limpiar la lista después de seleccionar
+                        });
+                        list.appendChild(div);
                     });
-                    productList.appendChild(div);
                 });
-            });
-    }
-});
-    document.getElementById('cliente').addEventListener('input', function() {
-    var term = this.value;
-    
-    if (term.length > 2) { // Buscar si tiene más de 2 caracteres
-        fetch('autocomplete_clients.php?term=' + term)
-            .then(response => response.json())
-            .then(data => {
-                var clientList = document.getElementById('client-list');
-                clientList.innerHTML = '';
-                data.forEach(client => {
-                    var div = document.createElement('div');
-                    div.innerText = client.Nombre;
-                    div.setAttribute('data-id', client.id_Cliente);
-                    div.addEventListener('click', function() {
-                        document.getElementById('cliente').value = client.Nombre;
-                        clientList.innerHTML = ''; // Limpiar la lista después de seleccionar
-                    });
-                    clientList.appendChild(div);
-                });
-            });
-    }
-});
+        } else {
+            list.innerHTML = ''; // Limpiar la lista si no hay suficientes caracteres
+        }
+    });
+
+    // Limpiar lista si el input pierde el foco
+    input.addEventListener('blur', function() {
+        setTimeout(() => { list.innerHTML = ''; }, 200);
+    });
+}
+
+// Configurar autocompletado para productos
+setupAutocomplete('producto', 'product-list', 'product');
+
+// Configurar autocompletado para clientes
+setupAutocomplete('cliente', 'client-list', 'client');
 </script>
 </body>
 </html>
