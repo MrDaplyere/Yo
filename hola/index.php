@@ -194,8 +194,16 @@ $reportData = $reportFacade->getSalesReport();
         <button type="submit" class="btn btn-success">Generar Reporte</button>
     </form>
 </div>
-<input type="text" id="producto" name="producto" placeholder="Buscar producto..." autocomplete="off">
-<div id="product-list"></div>
+<div>
+    <label for="product">Producto:</label>
+    <input type="text" id="product" name="product" placeholder="Buscar producto...">
+    <ul id="product-suggestions" class="suggestions"></ul>
+</div>
+
+<div>
+    <label for="price">Precio:</label>
+    <input type="text" id="price" name="price" readonly>
+</div>
 <input type="text" id="cliente" name="cliente" placeholder="Buscar cliente..." autocomplete="off">
 <div id="client-list"></div>
 <!-- Botón para insertar venta -->
