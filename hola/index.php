@@ -195,21 +195,22 @@ $reportData = $reportFacade->getSalesReport();
     </form>
 </div>
 <div>
-    <label for="producto">Producto:</label>
-    <input type="text" id="producto" name="producto" placeholder="Buscar producto...">
-    <ul id="product-list" class="suggestions"></ul>
-</div>
-
-<div>
-    <label for="price">Precio:</label>
-    <input type="text" id="price" name="price" readonly>
-</div>
-
-<div>
+<form id="sales-form">
     <label for="cliente">Cliente:</label>
-    <input type="text" id="cliente" name="cliente" placeholder="Buscar cliente...">
-    <ul id="client-list" class="suggestions"></ul>
-</div>
+    <input type="text" id="cliente" placeholder="Escribe un cliente">
+    <div id="client-list"></div>
+
+    <label for="producto">Producto:</label>
+    <input type="text" id="producto" placeholder="Escribe un producto">
+    <div id="product-list"></div>
+
+    <label for="precio">Precio:</label>
+    <input type="text" id="precio" readonly>
+
+    <button type="button" id="insert-sale">Insertar</button>
+</form>
+<div id="insert-status"></div>
+
 <!-- Botón para insertar venta -->
 <button class="btn btn-primary mb-3" data-toggle="modal" data-target="#insertModal">Insertar Venta</button>
 
@@ -410,6 +411,45 @@ $reportData = $reportFacade->getSalesReport();
 
     // Configurar autocompletado para clientes
     setupAutocomplete('cliente', 'client-list', 'client');
+
+    document.getElementById('insert-sale').addEventListener('click', function() {
+    const cliente = document.getElementById('cliente').value;
+    const producto = document.getElementById('producto').value;
+    const precio = document.getElementById('precio').value;
+
+    if (!cliente || !producto) {
+        alert("Por favor, selecciona un cliente y un producto.");
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('cliente', cliente);
+    formData.append('producto', producto);
+    formData.append('precio', precio);
+
+    fetch('insert_sale.php', {
+        method: 'POST',
+        body: formData
+    })
+        .then(response => response.json())
+        .then(data => {
+            const statusDiv = document.getElementById('insert-status');
+            if (data.success) {
+                statusDiv.innerText = 'Venta insertada correctamente.';
+                statusDiv.style.color = 'green';
+
+                // Limpia los campos después de insertar
+                document.getElementById('cliente').value = '';
+                document.getElementById('producto').value = '';
+                document.getElementById('precio').value = '';
+            } else {
+                statusDiv.innerText = `Error al insertar la venta: ${data.message}`;
+                statusDiv.style.color = 'red';
+            }
+        })
+        .catch(err => console.error('Error:', err));
+});
+
 </script>
 </body>
 </html>
