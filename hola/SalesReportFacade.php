@@ -74,5 +74,9 @@ class SalesReportFacade {
         }
         throw new Exception("No hay reporte");
     }
+    //autocomplete  
+public function searchProducts($term) {
+    return $this->reportBuilder->searchProducts($term);
+}
 }
 ?>
