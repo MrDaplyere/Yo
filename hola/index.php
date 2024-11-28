@@ -195,17 +195,21 @@ $reportData = $reportFacade->getSalesReport();
     </form>
 </div>
 <div>
-    <label for="product">Producto:</label>
-    <input type="text" id="product" name="product" placeholder="Buscar producto...">
-    <ul id="product-suggestions" class="suggestions"></ul>
+    <label for="producto">Producto:</label>
+    <input type="text" id="producto" name="producto" placeholder="Buscar producto...">
+    <ul id="product-list" class="suggestions"></ul>
 </div>
 
 <div>
     <label for="price">Precio:</label>
     <input type="text" id="price" name="price" readonly>
 </div>
-<input type="text" id="cliente" name="cliente" placeholder="Buscar cliente..." autocomplete="off">
-<div id="client-list"></div>
+
+<div>
+    <label for="cliente">Cliente:</label>
+    <input type="text" id="cliente" name="cliente" placeholder="Buscar cliente...">
+    <ul id="client-list" class="suggestions"></ul>
+</div>
 <!-- Botón para insertar venta -->
 <button class="btn btn-primary mb-3" data-toggle="modal" data-target="#insertModal">Insertar Venta</button>
 
@@ -357,78 +361,55 @@ $reportData = $reportFacade->getSalesReport();
         modal.find('#update_producto').val(producto);
         modal.find('#update_fecha').val(fecha);
     });
-function setupAutocomplete(inputId, listId, type) {
-    const input = document.getElementById(inputId);
-    const list = document.getElementById(listId);
+    function setupAutocomplete(inputId, listId, type) {
+        const input = document.getElementById(inputId);
+        const list = document.getElementById(listId);
 
-    input.addEventListener('input', function() {
-        const term = this.value;
+        input.addEventListener('input', function () {
+            const term = this.value;
 
-        if (term.length > 2) { // Buscar si tiene más de 2 caracteres
-            fetch(`autocomplete.php?term=${term}&type=${type}`)
-                .then(response => response.json())
-                .then(data => {
-                    list.innerHTML = '';
-                    data.forEach(item => {
-                        const div = document.createElement('div');
-                        div.innerText = item.Nombre || item.NombreProducto; // Adaptar según el tipo
-                        div.setAttribute('data-id', item.id_Cliente || item.id_producto);
-                        div.addEventListener('click', function() {
-                            input.value = item.Nombre || item.NombreProducto;
-                            list.innerHTML = ''; // Limpiar la lista después de seleccionar
+            if (term.length > 2) { // Buscar si tiene más de 2 caracteres
+                fetch(`autocomplete.php?term=${encodeURIComponent(term)}&type=${type}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        list.innerHTML = '';
+                        data.forEach(item => {
+                            const div = document.createElement('div');
+                            div.innerText = item.Nombre || item.NombreProducto; // Adaptar según el tipo
+                            div.setAttribute('data-id', item.id_Cliente || item.id_producto);
+                            div.addEventListener('click', function () {
+                                input.value = item.Nombre || item.NombreProducto;
+                                list.innerHTML = ''; // Limpiar la lista después de seleccionar
+
+                                // Si es de tipo producto, busca y actualiza el precio
+                                if (type === 'product') {
+                                    fetch(`autocomplete.php?action=get_price&id=${item.id_producto}`)
+                                        .then(response => response.json())
+                                        .then(priceData => {
+                                            document.getElementById('price').value = priceData.precio;
+                                        })
+                                        .catch(err => console.error('Error fetching price:', err));
+                                }
+                            });
+                            list.appendChild(div);
                         });
-                        list.appendChild(div);
                     });
-                });
-        } else {
-            list.innerHTML = ''; // Limpiar la lista si no hay suficientes caracteres
-        }
-    });
+            } else {
+                list.innerHTML = ''; // Limpiar la lista si no hay suficientes caracteres
+            }
+        });
 
-    // Limpiar lista si el input pierde el foco
-    input.addEventListener('blur', function() {
-        setTimeout(() => { list.innerHTML = ''; }, 200);
-    });
-}
+        // Limpiar lista si el input pierde el foco
+        input.addEventListener('blur', function () {
+            setTimeout(() => { list.innerHTML = ''; }, 200);
+        });
+    }
 
-// Configurar autocompletado para productos
-setupAutocomplete('producto', 'product-list', 'product');
+    // Configurar autocompletado para productos
+    setupAutocomplete('producto', 'product-list', 'product');
 
-// Configurar autocompletado para clientes
-setupAutocomplete('cliente', 'client-list', 'client');
-        document.getElementById('product').addEventListener('input', function () {
-        const query = this.value;
-        if (query.length < 2) {
-            document.getElementById('product-suggestions').innerHTML = '';
-            return;
-        }
-
-        fetch(`autocomplete.php?term=${encodeURIComponent(query)}`)
-            .then(response => response.json())
-            .then(data => {
-                const suggestions = document.getElementById('product-suggestions');
-                suggestions.innerHTML = '';
-                data.forEach(item => {
-                    const li = document.createElement('li');
-                    li.textContent = item.NombreProducto;
-                    li.dataset.id = item.id_producto;
-                    li.addEventListener('click', function () {
-                        document.getElementById('product').value = item.NombreProducto;
-                        suggestions.innerHTML = '';
-
-                        // Fetch product price
-                        fetch(`autocomplete.php?action=get_price&id=${item.id_producto}`)
-                            .then(response => response.json())
-                            .then(priceData => {
-                                document.getElementById('price').value = priceData.precio;
-                            })
-                            .catch(err => console.error('Error fetching price:', err));
-                    });
-                    suggestions.appendChild(li);
-                });
-            })
-            .catch(err => console.error('Error fetching products:', err));
-    });
+    // Configurar autocompletado para clientes
+    setupAutocomplete('cliente', 'client-list', 'client');
 </script>
 </body>
 </html>
