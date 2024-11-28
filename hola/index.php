@@ -388,6 +388,39 @@ setupAutocomplete('producto', 'product-list', 'product');
 
 // Configurar autocompletado para clientes
 setupAutocomplete('cliente', 'client-list', 'client');
+        document.getElementById('product').addEventListener('input', function () {
+        const query = this.value;
+        if (query.length < 2) {
+            document.getElementById('product-suggestions').innerHTML = '';
+            return;
+        }
+
+        fetch(`autocomplete.php?term=${encodeURIComponent(query)}`)
+            .then(response => response.json())
+            .then(data => {
+                const suggestions = document.getElementById('product-suggestions');
+                suggestions.innerHTML = '';
+                data.forEach(item => {
+                    const li = document.createElement('li');
+                    li.textContent = item.NombreProducto;
+                    li.dataset.id = item.id_producto;
+                    li.addEventListener('click', function () {
+                        document.getElementById('product').value = item.NombreProducto;
+                        suggestions.innerHTML = '';
+
+                        // Fetch product price
+                        fetch(`autocomplete.php?action=get_price&id=${item.id_producto}`)
+                            .then(response => response.json())
+                            .then(priceData => {
+                                document.getElementById('price').value = priceData.precio;
+                            })
+                            .catch(err => console.error('Error fetching price:', err));
+                    });
+                    suggestions.appendChild(li);
+                });
+            })
+            .catch(err => console.error('Error fetching products:', err));
+    });
 </script>
 </body>
 </html>
