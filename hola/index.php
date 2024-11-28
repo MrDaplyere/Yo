@@ -1,4 +1,4 @@
-<?php
+q<?php
 require_once 'Database.php';
 require_once 'ReportBuilder.php';
 require_once 'SalesReportFacade.php';
@@ -196,6 +196,8 @@ $reportData = $reportFacade->getSalesReport();
 </div>
 <input type="text" id="producto" name="producto" placeholder="Buscar producto..." autocomplete="off">
 <div id="product-list"></div>
+<input type="text" id="cliente" name="cliente" placeholder="Buscar cliente..." autocomplete="off">
+<div id="client-list"></div>
 <!-- Botón para insertar venta -->
 <button class="btn btn-primary mb-3" data-toggle="modal" data-target="#insertModal">Insertar Venta</button>
 
