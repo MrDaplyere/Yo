@@ -369,6 +369,28 @@ $reportData = $reportFacade->getSalesReport();
             });
     }
 });
+    document.getElementById('cliente').addEventListener('input', function() {
+    var term = this.value;
+    
+    if (term.length > 2) { // Buscar si tiene más de 2 caracteres
+        fetch('autocomplete_clients.php?term=' + term)
+            .then(response => response.json())
+            .then(data => {
+                var clientList = document.getElementById('client-list');
+                clientList.innerHTML = '';
+                data.forEach(client => {
+                    var div = document.createElement('div');
+                    div.innerText = client.Nombre;
+                    div.setAttribute('data-id', client.id_Cliente);
+                    div.addEventListener('click', function() {
+                        document.getElementById('cliente').value = client.Nombre;
+                        clientList.innerHTML = ''; // Limpiar la lista después de seleccionar
+                    });
+                    clientList.appendChild(div);
+                });
+            });
+    }
+});
 </script>
 </body>
 </html>
