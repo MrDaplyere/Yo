@@ -1,4 +1,4 @@
-q<?php
+<?php
 require_once 'Database.php';
 require_once 'ReportBuilder.php';
 require_once 'SalesReportFacade.php';
