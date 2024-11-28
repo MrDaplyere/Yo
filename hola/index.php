@@ -166,7 +166,8 @@ $reportData = $reportFacade->getSalesReport();
         <button type="submit" class="btn btn-success">Generar Reporte</button>
     </form>
 </div>
-
+<input type="text" id="producto" name="producto" placeholder="Buscar producto..." autocomplete="off">
+<div id="product-list"></div>
 <!-- Botón para insertar venta -->
 <button class="btn btn-primary mb-3" data-toggle="modal" data-target="#insertModal">Insertar Venta</button>
 
@@ -318,6 +319,28 @@ $reportData = $reportFacade->getSalesReport();
         modal.find('#update_producto').val(producto);
         modal.find('#update_fecha').val(fecha);
     });
+    document.getElementById('producto').addEventListener('input', function() {
+    var term = this.value;
+    
+    if (term.length > 2) { 
+        fetch('autocomplete.php?term=' + term)
+            .then(response => response.json())
+            .then(data => {
+                var productList = document.getElementById('product-list');
+                productList.innerHTML = '';
+                data.forEach(product => {
+                    var div = document.createElement('div');
+                    div.innerText = product.NombreProducto;
+                    div.setAttribute('data-id', product.id_producto);
+                    div.addEventListener('click', function() {
+                        document.getElementById('producto').value = product.NombreProducto;
+                        productList.innerHTML = ''; 
+                    });
+                    productList.appendChild(div);
+                });
+            });
+    }
+});
 </script>
 </body>
 </html>
