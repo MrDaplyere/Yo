@@ -341,6 +341,7 @@ $reportData = $reportFacade->getSalesReport();
 
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     // Configuración de los modales para eliminar y editar
     $('#deleteModal').on('show.bs.modal', function (event) {
@@ -449,7 +450,17 @@ document.getElementById('insert-button').addEventListener('click', function () {
         try {
             const jsonData = JSON.parse(data);
             if (jsonData.success) {
-                alert('Venta insertada correctamente.');
+                // Mostrar SweetAlert
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Pago realizado exitosamente!',
+                    text: 'La venta se ha registrado correctamente.',
+                    confirmButtonText: 'Aceptar'
+                }).then(() => {
+                    // Recargar la página
+                    location.reload();
+                });
+
                 // Opcional: limpiar los inputs
                 productoInput.value = '';
                 clienteInput.value = '';
@@ -463,7 +474,6 @@ document.getElementById('insert-button').addEventListener('click', function () {
     })
     .catch(err => console.error('Error al insertar la venta:', err));
 });
-
 </script>
 </body>
 </html>
