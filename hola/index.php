@@ -330,7 +330,8 @@ function setupAutocomplete(inputId, listId, type) {
         const term = this.value;
 
         if (term.length > 2) { // Buscar si tiene más de 2 caracteres
-            fetch(`/hola/business/autocomplete.php?term=${encodeURIComponent(term)}&type=${type}`)
+            // Usar ruta absoluta en el fetch
+            fetch('/hola/business/autocomplete.php?term=' + encodeURIComponent(term) + '&type=' + type)
                 .then(response => response.json())
                 .then(data => {
                     list.innerHTML = ''; // Limpiar la lista de sugerencias
@@ -344,7 +345,8 @@ function setupAutocomplete(inputId, listId, type) {
 
                             // Si es de tipo producto, busca y actualiza el precio
                             if (type === 'product') {
-                                fetch(`/hola/business/autocomplete.php?action=get_price&id=${item.id_producto}`)
+                                // Usar ruta absoluta para obtener el precio
+                                fetch('/hola/business/autocomplete.php?action=get_price&id=' + item.id_producto)
                                     .then(response => response.json())
                                     .then(priceData => {
                                         const priceInput = document.getElementById('price');
@@ -357,7 +359,8 @@ function setupAutocomplete(inputId, listId, type) {
                         });
                         list.appendChild(div);
                     });
-                });
+                })
+                .catch(err => console.error('Error fetching autocomplete data:', err));
         } else {
             list.innerHTML = ''; // Limpiar la lista si no hay suficientes caracteres
         }
