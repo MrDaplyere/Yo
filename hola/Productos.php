@@ -1,4 +1,6 @@
 <?php
+var_dump($productData); // Verifica qué datos se están recuperando
+
 require_once 'Database.php';
 require_once 'ReportBuilder.php';
 require_once 'SalesReportFacade.php'; // Incluir la fachada
