@@ -331,7 +331,7 @@ function setupAutocomplete(inputId, listId, type) {
 
         if (term.length > 2) { // Buscar si tiene más de 2 caracteres
             // Usar ruta absoluta en el fetch
-fetch('/hola/business/autocomplete.php?term=' + encodeURIComponent(term) + '&type=' + type)
+fetch('https://yo-sxvd.onrender.com/hola/business/autocomplete.php?term=' + encodeURIComponent(term) + '&type=' + type)
     .then(response => {
         if (!response.ok) {
             throw new Error('Error en la solicitud: ' + response.statusText); // Captura errores HTTP
