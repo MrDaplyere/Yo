@@ -4,8 +4,8 @@ require_once 'fpdf/fpdf.php';
 
 class PdfReportStrategy implements ReportStrategy {
     public function generateReport(array $data): string {
-        ob_clean();
-        flush();
+        // Elimina el uso de ob_clean y flush si no estás usando buffering de salida
+        // No es necesario limpiar el buffer si no estás iniciando explícitamente uno
 
         $pdf = new FPDF();
         $pdf->AddPage();
@@ -28,7 +28,12 @@ class PdfReportStrategy implements ReportStrategy {
             $pdf->Cell(120, 10, ' ', 1, 1, 'C');
         }
         
-        return $pdf->Output('S'); 
+        // Si necesitas que el PDF se descargue directamente, usa 'I' o 'D'
+        return $pdf->Output('S'); // Devuelve el PDF como una cadena
+        // Si prefieres que el PDF se muestre en el navegador, usa 'I'
+        // return $pdf->Output('I'); // Mostrar PDF directamente
+        // Si prefieres que el PDF se descargue, usa 'D'
+        // return $pdf->Output('D'); // Descargar PDF
     }
 }
 ?>
