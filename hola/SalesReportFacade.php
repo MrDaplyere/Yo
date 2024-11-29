@@ -88,5 +88,21 @@ public function searchClients($term) {
         return $this->addSale($cliente, $producto, $fecha);
     }
 
+    private function addSale($cliente, $producto, $fecha) {
+    try {
+        $query = "INSERT INTO ventas (cliente, producto, fecha) VALUES (:cliente, :producto, :fecha)";
+        $stmt = $this->db->prepare($query);
+
+        $stmt->bindParam(':cliente', $cliente);
+        $stmt->bindParam(':producto', $producto);
+        $stmt->bindParam(':fecha', $fecha);
+
+        return $stmt->execute();
+    } catch (Exception $e) {
+        return false; // Manejar el error según sea necesario
+    }
+}
+
+
 }
 ?>
