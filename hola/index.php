@@ -11,25 +11,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $salesReport = $presentador->generateReport($format);
 
         if ($format === 'pdf') {
-            // Enviar el reporte PDF al navegador
+            // Asegúrate de que no haya salida antes de los encabezados
+            ob_clean(); // Limpia cualquier salida previa (si es que estás usando el buffer)
             header('Content-Type: application/pdf');
             header('Content-Disposition: attachment; filename="reporte_ventas.pdf"');
             echo $salesReport;
-            exit;
+            exit;  // Asegúrate de salir después de enviar el PDF
         }
 
-        // Para formatos JSON o HTML
+        // Para otros formatos, se maneja aquí
         echo $salesReport;
         exit;
-    } elseif (isset($_POST['cliente'], $_POST['producto'])) {
-        $cliente = $_POST['cliente'];
-        $producto = $_POST['producto'];
-        $result = $presentador->insertSale($cliente, $producto);
-        // Se puede agregar un mensaje de éxito o error según el resultado de la inserción
-    } elseif (isset($_POST['delete_id'])) {
-        $result = $presentador->deleteSale($_POST['delete_id']);
-    } elseif (isset($_POST['update_id'], $_POST['update_cliente'], $_POST['update_producto'], $_POST['update_fecha'])) {
-        $result = $presentador->updateSale($_POST['update_id'], $_POST['update_cliente'], $_POST['update_producto'], $_POST['update_fecha']);
     }
 }
 
