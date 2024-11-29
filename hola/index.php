@@ -3,22 +3,14 @@ require_once 'Database.php';
 require_once 'ReportBuilder.php';
 require_once 'SalesReportFacade.php';
 require_once 'ReportStrategy.php';
-require_once 'JsonReportStrategy.php';
-require_once 'HtmlReportStrategy.php';
-require_once 'PdfReportStrategy.php';
-require_once 'DataAccessObjects.php'; // Aquí se incluye el archivo DAO
+require_once 'JSONReportStrategy.php';
+require_once 'PDFReportStrategy.php';
 
 $database = new Database();
 $db = $database->getConnection();
 
-// Crear instancias de los DAO
-$salesDao = new SalesDao($db);
-$clientsDao = new ClientsDao($db);
-$productsDao = new ProductsDao($db);
-
 $reportFacade = new SalesReportFacade($db);
 
-// El resto de tu lógica de index.php sigue igual
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['report_format'])) {
         $format = $_POST['report_format'];
@@ -32,16 +24,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         try {
             $salesReport = $reportFacade->generateSalesReport();
-            
+
             if ($format === 'pdf') {
+                // Establecer cabeceras HTTP para descargar o mostrar el PDF
                 header('Content-Type: application/pdf');
                 header('Content-Disposition: attachment; filename="reporte_ventas.pdf"');
-                echo $salesReport; 
-                exit; 
+
+                // Imprimir el contenido del PDF
+                echo $salesReport;
+                exit; // Termina el script después de enviar el PDF
             }
 
+            // Envío para formatos distintos a PDF
             echo $salesReport;
-            exit; 
+            exit; // Termina el script después de enviar el reporte
         } catch (Exception $e) {
             echo "Error: " . $e->getMessage();
         }
@@ -51,7 +47,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     elseif (isset($_POST['cliente'], $_POST['producto'], $_POST['fecha'])) {
         $result = $reportFacade->addSale($_POST['cliente'], $_POST['producto'], $_POST['fecha']);
         if ($result) {
+            // Éxito en la inserción
         } else {
+            // Fallo en la inserción
         }
     }
 
@@ -59,7 +57,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     elseif (isset($_POST['update_id'], $_POST['update_cliente'], $_POST['update_producto'], $_POST['update_fecha'])) {
         $result = $reportFacade->updateSale($_POST['update_id'], $_POST['update_cliente'], $_POST['update_producto'], $_POST['update_fecha']);
         if ($result) {
+            // Éxito en la actualización
         } else {
+            // Fallo en la actualización
         }
     }
 
@@ -67,11 +67,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     elseif (isset($_POST['delete_id'])) {
         $result = $reportFacade->removeSale($_POST['delete_id']);
         if ($result) {
+            // Éxito en la eliminación
         } else {
+            // Fallo en la eliminación
         }
     }
 }
 
+// Obtener y mostrar los datos del reporte (HTML por defecto)
 $reportData = $reportFacade->getSalesReport();
 ?>
 
@@ -192,6 +195,10 @@ $reportData = $reportFacade->getSalesReport();
     </form>
 </div>
 <div>
+<form id="sales-form">
+    <label for="cliente">Cliente:</label>
+    <input type="text" id="cliente" placeholder="Escribe un cliente">
+    <div id="client-list"></div>
 <form id="sales-form" class="p-4">
     <div class="mb-3">
         <label for="cliente" class="form-label">Cliente:</label>
@@ -199,17 +206,23 @@ $reportData = $reportFacade->getSalesReport();
         <div id="client-list" class="list-group mt-2"></div>
     </div>
 
+    <label for="producto">Producto:</label>
+    <input type="text" id="producto" placeholder="Escribe un producto">
+    <div id="product-list"></div>
     <div class="mb-3">
         <label for="producto" class="form-label">Producto:</label>
         <input type="text" id="producto" class="form-control" placeholder="Escribe un producto">
         <div id="product-list" class="list-group mt-2"></div>
     </div>
 
+    <label for="precio">Precio:</label>
+    <input type="text" id="price" readonly>
     <div class="mb-3">
         <label for="precio" class="form-label">Precio:</label>
         <input type="text" id="price" class="form-control" readonly>
     </div>
 
+    <button type="button" id="insert-button">Insertar</button>
     <button type="button" id="insert-button" class="btn btn-primary">Insertar</button>
 </form>
 <div id="insert-status"></div>
