@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../business/Presentador.php'; // Ruta absoluta desde el archivo actual
+require_once 'business/Presentador.php'; // Ruta correcta
 
 $presentador = new Presentador();
 
@@ -30,6 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 $reportData = $presentador->getSalesReport();
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
