@@ -362,68 +362,71 @@ $reportData = $reportFacade->getSalesReport();
         modal.find('#update_producto').val(producto);
         modal.find('#update_fecha').val(fecha);
     });
-    function setupAutocomplete(inputId, listId, type) {
-        const input = document.getElementById(inputId);
-        const list = document.getElementById(listId);
+function setupAutocomplete(inputId, listId, type) {
+    const input = document.getElementById(inputId);
+    const list = document.getElementById(listId);
 
-        input.addEventListener('input', function () {
-            const term = this.value;
+    input.addEventListener('input', function () {
+        const term = this.value;
 
-            if (term.length > 2) { // Buscar si tiene más de 2 caracteres
-                fetch(`autocomplete.php?term=${encodeURIComponent(term)}&type=${type}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        list.innerHTML = '';
-                        data.forEach(item => {
-                            const div = document.createElement('div');
-                            div.innerText = item.Nombre || item.NombreProducto; // Adaptar según el tipo
-                            div.setAttribute('data-id', item.id_Cliente || item.id_producto);
-                            div.addEventListener('click', function () {
-                                input.value = item.Nombre || item.NombreProducto;
-                                list.innerHTML = ''; // Limpiar la lista después de seleccionar
+        if (term.length > 2) { // Buscar si tiene más de 2 caracteres
+            fetch(`autocomplete.php?term=${encodeURIComponent(term)}&type=${type}`)
+                .then(response => response.json())
+                .then(data => {
+                    list.innerHTML = '';
+                    data.forEach(item => {
+                        const div = document.createElement('div');
+                        div.innerText = item.Nombre || item.NombreProducto; // Adaptar según el tipo
+                        div.setAttribute('data-id', item.id_Cliente || item.id_producto);
+                        div.addEventListener('click', function () {
+                            input.value = item.Nombre || item.NombreProducto;
+                            list.innerHTML = ''; // Limpiar la lista después de seleccionar
 
-                                // Si es de tipo producto, busca y actualiza el precio
-                                if (type === 'product') {
-                                    fetch(`autocomplete.php?action=get_price&id=${item.id_producto}`)
-                                        .then(response => response.json())
-                                        .then(priceData => {
-                                            document.getElementById('price').value = priceData.precio;
-                                        })
-                                        .catch(err => console.error('Error fetching price:', err));
-                                }
-                            });
-                            list.appendChild(div);
+                            // Si es de tipo producto, busca y actualiza el precio
+                            if (type === 'product') {
+                                fetch(`autocomplete.php?action=get_price&id=${item.id_producto}`)
+                                    .then(response => response.json())
+                                    .then(priceData => {
+                                        document.getElementById('price').value = priceData.precio;
+                                    })
+                                    .catch(err => console.error('Error fetching price:', err));
+                            }
                         });
+                        list.appendChild(div);
                     });
-            } else {
-                list.innerHTML = ''; // Limpiar la lista si no hay suficientes caracteres
-            }
-        });
+                });
+        } else {
+            list.innerHTML = ''; // Limpiar la lista si no hay suficientes caracteres
+        }
+    });
 
-        // Limpiar lista si el input pierde el foco
-        input.addEventListener('blur', function () {
-            setTimeout(() => { list.innerHTML = ''; }, 200);
-        });
-    }
+    // Limpiar lista si el input pierde el foco
+    input.addEventListener('blur', function () {
+        setTimeout(() => { list.innerHTML = ''; }, 200);
+    });
+}
 
-    // Configurar autocompletado para productos
-    setupAutocomplete('producto', 'product-list', 'product');
+// Configurar autocompletado para productos
+setupAutocomplete('producto', 'product-list', 'product');
 
-    // Configurar autocompletado para clientes
-    setupAutocomplete('cliente', 'client-list', 'client');
+// Configurar autocompletado para clientes
+setupAutocomplete('cliente', 'client-list', 'client');
 
 document.getElementById('insert-button').addEventListener('click', function () {
     const productoInput = document.getElementById('producto');
     const clienteInput = document.getElementById('cliente');
     const priceInput = document.getElementById('price');
 
+    if (!productoInput || !clienteInput || !priceInput) {
+        console.error('Uno o más elementos no existen en el DOM.');
+        return;
+    }
+
     const producto = productoInput.value;
     const cliente = clienteInput.value;
     const precio = priceInput.value;
 
     // Verifica que los valores no estén vacíos antes de continuar
-    console.log('Producto:', producto, 'Cliente:', cliente, 'Precio:', precio);
-
     if (!producto || !cliente || !precio) {
         alert('Por favor, complete todos los campos antes de insertar.');
         return;
@@ -434,20 +437,30 @@ document.getElementById('insert-button').addEventListener('click', function () {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ producto, cliente, precio })
     })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
+    .then(response => response.text())  // Cambiado a .text() para ver la respuesta como texto plano
+    .then(data => {
+        console.log('Respuesta del servidor:', data);  // Mostrar la respuesta del servidor en consola
+
+        // Intentar parsear la respuesta como JSON
+        try {
+            const jsonData = JSON.parse(data);
+            if (jsonData.success) {
                 alert('Venta insertada correctamente.');
                 // Opcional: limpiar los inputs
                 productoInput.value = '';
                 clienteInput.value = '';
                 priceInput.value = '';
             } else {
-                alert('Error al insertar la venta: ' + data.message);
+                alert('Error al insertar la venta: ' + jsonData.message);
             }
-        })
-        .catch(err => console.error('Error al insertar la venta:', err));
+        } catch (err) {
+            console.error('Error al parsear JSON:', err);
+            alert('Hubo un problema al procesar la respuesta del servidor.');
+        }
+    })
+    .catch(err => console.error('Error al insertar la venta:', err));
 });
+
 </script>
 </body>
 </html>
