@@ -85,9 +85,25 @@ class SalesReportFacade {
     }
 
     // ------------------------------ INSERTAR VENTA ------------------------------
+    // -------------------------------VENTAS--------------------------------------
     public function insertSale($cliente, $producto) {
         $fecha = date('Y-m-d H:i:s'); // Fecha actual
-        return $this->addSale($cliente, $producto, $fecha); // Llamamos a la función pública addSale
+        return $this->addSale($cliente, $producto, $fecha);
+    }
+
+    private function addSale($cliente, $producto, $fecha) { // Insertar venta con fecha
+        try {
+            $query = "INSERT INTO ventas (cliente, producto, fecha) VALUES (:cliente, :producto, :fecha)";
+            $stmt = $this->db->prepare($query);
+
+            $stmt->bindParam(':cliente', $cliente);
+            $stmt->bindParam(':producto', $producto);
+            $stmt->bindParam(':fecha', $fecha);
+
+            return $stmt->execute();
+        } catch (Exception $e) {
+            return false; // Manejar el error según sea necesario
+        }
     }
 }
 ?>
