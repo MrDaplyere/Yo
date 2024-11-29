@@ -4,10 +4,11 @@ include_once 'ReportBuilder.php';
 class SalesReportFacade {
     private $db;
     private $reportBuilder;
+    private $reportStrategy;
 
     public function __construct($db) {
         $this->db = $db;
-        $this->reportBuilder = new ReportBuilder($this->db); // El ReportBuilder interactúa con DAO
+        $this->reportBuilder = new ReportBuilder($this->db);
     }
 
     // -------------------------------VENTAS--------------------------------------
@@ -56,11 +57,22 @@ class SalesReportFacade {
     public function updateProduct($id_producto, $nombreProducto, $precio, $revendedor) {
         return $this->reportBuilder->updateProduct($id_producto, $nombreProducto, $precio, $revendedor);
     }
-    
+
     public function getProductsReport() {
-        $result = $this->reportBuilder->buildProductsReport();  // Llama a ReportBuilder
-        error_log("Product Data: " . print_r($result, true));  // Para ver lo que contiene $result
-        return $result;
+        return $this->reportBuilder->buildProductsReport();  
+    }
+
+    // -------------------------------REPORTES--------------------------------------
+    public function setReportStrategy(ReportStrategy $strategy) {
+        $this->reportStrategy = $strategy;
+    }
+
+    public function generateSalesReport() {
+        $data = $this->reportBuilder->buildSalesReport();
+        if ($this->reportStrategy) {
+            return $this->reportStrategy->generateReport($data);
+        }
+        throw new Exception("No hay reporte");
     }
 
     // ------------------------------ AUTOCOMPLETE ------------------------------
@@ -73,6 +85,7 @@ class SalesReportFacade {
     }
 
     // ------------------------------ INSERTAR VENTA ------------------------------
+    // -------------------------------VENTAS--------------------------------------
     public function insertSale($cliente, $producto) {
         $fecha = date('Y-m-d H:i:s'); // Fecha actual
         return $this->addSale($cliente, $producto, $fecha);
