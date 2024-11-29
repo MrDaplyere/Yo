@@ -56,9 +56,11 @@ class SalesReportFacade {
     public function updateProduct($id_producto, $nombreProducto, $precio, $revendedor) {
         return $this->reportBuilder->updateProduct($id_producto, $nombreProducto, $precio, $revendedor);
     }
-
+    
     public function getProductsReport() {
-        return $this->reportBuilder->buildProductsReport();  
+        $result = $this->reportBuilder->buildProductsReport();  // Llama a ReportBuilder
+        error_log("Product Data: " . print_r($result, true));  // Para ver lo que contiene $result
+        return $result;
     }
 
     // ------------------------------ AUTOCOMPLETE ------------------------------
