@@ -3,7 +3,10 @@ include_once 'ReportStrategy.php';
 require_once 'fpdf/fpdf.php';
 
 class PdfReportStrategy implements ReportStrategy {
-    public function generateReport(array $data): string { 
+    public function generateReport(array $data): string {
+        ob_clean();
+        flush();
+
         $pdf = new FPDF();
         $pdf->AddPage();
         $pdf->SetFont('Arial', '', 12);
@@ -28,7 +31,4 @@ class PdfReportStrategy implements ReportStrategy {
         return $pdf->Output('S'); 
     }
 }
-
-
 ?>
-
