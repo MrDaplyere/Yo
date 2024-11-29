@@ -12,9 +12,9 @@ if (!$data) {
     exit;
 }
 
-$producto = $data->producto;
-$cliente = $data->cliente;
-$fecha = $data->fecha; // Asegúrate de que se recibe una fecha en formato 'YYYY-MM-DD'
+$producto = $data->producto ?? null;
+$cliente = $data->cliente ?? null;
+$fecha = $data->fecha ?? null; // Verifica si `fecha` existe, de lo contrario asigna null
 
 if (empty($producto) || empty($cliente) || empty($fecha)) {
     echo json_encode(['success' => false, 'message' => 'Los campos cliente, producto y fecha son obligatorios.']);
