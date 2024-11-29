@@ -10,7 +10,7 @@ RUN chmod -R 755 /var/www/html/
 # Instala extensiones adicionales de PHP si son necesarias
 RUN docker-php-ext-install mysqli pdo pdo_mysql
 
-# Copia la configuración personalizada de Apache desde la raíz del proyecto
+# Copia la configuración personalizada de Apache
 COPY 000.default.conf /etc/apache2/sites-available/000-default.conf
 
 # Habilita el módulo de reescritura de Apache
