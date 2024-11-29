@@ -415,19 +415,19 @@ setupAutocomplete('cliente', 'client-list', 'client');
 document.getElementById('insert-button').addEventListener('click', function () {
     const productoInput = document.getElementById('producto');
     const clienteInput = document.getElementById('cliente');
-    const priceInput = document.getElementById('price');
+    const revendedorInput = document.getElementById('price'); // Cambié 'price' por 'revendedor'
 
-    if (!productoInput || !clienteInput || !priceInput) {
+    if (!productoInput || !clienteInput || !revendedorInput) {
         console.error('Uno o más elementos no existen en el DOM.');
         return;
     }
 
     const producto = productoInput.value;
     const cliente = clienteInput.value;
-    const precio = priceInput.value;
+    const revendedor = revendedorInput.value; // Cambié 'precio' por 'revendedor'
 
     // Verifica que los valores no estén vacíos antes de continuar
-    if (!producto || !cliente || !precio) {
+    if (!producto || !cliente || !revendedor) { // Cambié 'precio' por 'revendedor'
         alert('Por favor, complete todos los campos antes de insertar.');
         return;
     }
@@ -435,7 +435,7 @@ document.getElementById('insert-button').addEventListener('click', function () {
     fetch('insert_sales.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ producto, cliente, precio })
+        body: JSON.stringify({ producto, cliente, revendedor }) // Cambié 'precio' por 'revendedor'
     })
     .then(response => response.text())  // Cambiado a .text() para ver la respuesta como texto plano
     .then(data => {
@@ -449,7 +449,7 @@ document.getElementById('insert-button').addEventListener('click', function () {
                 // Opcional: limpiar los inputs
                 productoInput.value = '';
                 clienteInput.value = '';
-                priceInput.value = '';
+                revendedorInput.value = ''; // Cambié 'price' por 'revendedor'
             } else {
                 alert('Error al insertar la venta: ' + jsonData.message);
             }
