@@ -16,19 +16,13 @@ if (isset($_GET['term']) && isset($_GET['type'])) {
         // Obtener todos los productos
         $products = $salesReportFacade->getProductsReport();
 
-        // Verificar si los productos tienen la estructura esperada
-        if ($products) {
-            // Filtrar productos según el término buscado
-            $filteredProducts = array_filter($products, function($product) use ($term) {
-                // Asegurarse de que 'NombreProducto' existe y no es null
-                return isset($product['NombreProducto']) && stripos($product['NombreProducto'], $term) !== false;
-            });
+        // Filtrar productos según el término buscado
+        $filteredProducts = array_filter($products, function($product) use ($term) {
+            return stripos($product['NombreProducto'], $term) !== false;
+        });
 
-            // Devolver los productos filtrados como JSON
-            echo json_encode(array_values($filteredProducts));
-        } else {
-            echo json_encode([]); // Si no hay productos, devolver un arreglo vacío
-        }
+        // Devolver los productos filtrados como JSON
+        echo json_encode(array_values($filteredProducts));
     }
     // Búsqueda de clientes
     elseif ($type === 'client') {
