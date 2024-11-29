@@ -381,43 +381,33 @@ function setupAutocomplete(inputId, listId, type) {
 
         if (term.length > 2) { // Buscar si tiene más de 2 caracteres
             fetch(`autocomplete.php?term=${encodeURIComponent(term)}&type=${type}`)
-                .then(response => response.text())  // Cambiar a .text() para obtener todo el contenido de la respuesta
+                .then(response => response.json())
                 .then(data => {
-                    console.log('Respuesta del servidor:', data);  // Agregar un log aquí para ver el contenido
+                    list.innerHTML = ''; // Limpiar la lista de sugerencias
+                    data.forEach(item => {
+                        const div = document.createElement('div');
+                        div.innerText = item.Nombre || item.NombreProducto; // Adaptar según el tipo
+                        div.setAttribute('data-id', item.id_Cliente || item.id_producto);
+                        div.addEventListener('click', function () {
+                            input.value = item.Nombre || item.NombreProducto; // Rellenar input con el nombre seleccionado
+                            list.innerHTML = ''; // Limpiar la lista después de seleccionar
 
-                    try {
-                        const jsonData = JSON.parse(data);  // Intentar parsear la respuesta
-
-                        list.innerHTML = ''; // Limpiar la lista de sugerencias
-                        jsonData.forEach(item => {
-                            const div = document.createElement('div');
-                            div.innerText = item.Nombre || item.NombreProducto; // Adaptar según el tipo
-                            div.setAttribute('data-id', item.id_Cliente || item.id_producto);
-                            div.addEventListener('click', function () {
-                                input.value = item.Nombre || item.NombreProducto; // Rellenar input con el nombre seleccionado
-                                list.innerHTML = ''; // Limpiar la lista después de seleccionar
-
-                                // Si es de tipo producto, busca y actualiza el precio
-                                if (type === 'product') {
-                                    fetch(`autocomplete.php?action=get_price&id=${item.id_producto}`)
-                                        .then(response => response.json())
-                                        .then(priceData => {
-                                            const priceInput = document.getElementById('price');
-                                            if (priceInput) {
-                                                priceInput.value = priceData.precio; // Rellenar campo de precio
-                                            }
-                                        })
-                                        .catch(err => console.error('Error fetching price:', err));
-                                }
-                            });
-                            list.appendChild(div);
+                            // Si es de tipo producto, busca y actualiza el precio
+                            if (type === 'product') {
+                                fetch(`autocomplete.php?action=get_price&id=${item.id_producto}`)
+                                    .then(response => response.json())
+                                    .then(priceData => {
+                                        const priceInput = document.getElementById('price');
+                                        if (priceInput) {
+                                            priceInput.value = priceData.precio; // Rellenar campo de precio
+                                        }
+                                    })
+                                    .catch(err => console.error('Error fetching price:', err));
+                            }
                         });
-                    } catch (err) {
-                        console.error('Error al parsear JSON:', err);
-                        alert('Hubo un problema al procesar la respuesta del servidor.');
-                    }
-                })
-                .catch(err => console.error('Error al buscar datos del autocompletado:', err));
+                        list.appendChild(div);
+                    });
+                });
         } else {
             list.innerHTML = ''; // Limpiar la lista si no hay suficientes caracteres
         }
@@ -458,7 +448,7 @@ document.getElementById('insert-button').addEventListener('click', function () {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ producto, cliente })
     })
-    .then(response => response.text())  // Cambiar a .text() para obtener la respuesta como texto
+    .then(response => response.text())
     .then(data => {
         console.log('Respuesta del servidor:', data);
 
@@ -490,7 +480,6 @@ document.getElementById('insert-button').addEventListener('click', function () {
     })
     .catch(err => console.error('Error al insertar la venta:', err));
 });
-
 </script>
 </body>
 </html>
