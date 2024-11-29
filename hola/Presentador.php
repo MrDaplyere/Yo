@@ -5,7 +5,6 @@ require_once 'SalesReportFacade.php';
 require_once 'Database.php';
 require_once 'JSONReportStrategy.php';
 require_once 'PDFReportStrategy.php';
-require_once 'HtmlReportStrategy.php';
 
 class Presentador {
     private $reportFacade;
@@ -28,10 +27,7 @@ class Presentador {
             $this->reportFacade->setReportStrategy(new JsonReportStrategy());
         } elseif ($format === 'pdf') {
             $this->reportFacade->setReportStrategy(new PdfReportStrategy());
-        } elseif ($format === 'html') {
-            $this->reportFacade->setReportStrategy(new HtmlReportStrategy());
-        }
-
+        } 
         return $this->reportFacade->generateSalesReport();
     }
 
