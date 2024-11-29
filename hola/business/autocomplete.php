@@ -1,11 +1,27 @@
 <?php
+// Configurar las cabeceras para asegurar que el contenido sea JSON
+header('Content-Type: application/json');
+
 // Corregir las rutas para que apunten a los archivos en la capa de negocio
-include_once __DIR__ . '/../business/SalesReportFacade.php';
-include_once __DIR__ . '/../data/Database.php';
+if (file_exists(__DIR__ . '/../business/SalesReportFacade.php')) {
+    include_once __DIR__ . '/../business/SalesReportFacade.php';
+} else {
+    die('Archivo SalesReportFacade.php no encontrado.');
+}
+
+if (file_exists(__DIR__ . '/../data/Database.php')) {
+    include_once __DIR__ . '/../data/Database.php';
+} else {
+    die('Archivo Database.php no encontrado.');
+}
 
 // Conexión a la base de datos
 $database = new Database();
 $db = $database->getConnection();
+if ($db === null) {
+    die('Error de conexión a la base de datos.');
+}
+
 $salesReportFacade = new SalesReportFacade($db);
 
 if (isset($_GET['term']) && isset($_GET['type'])) {
