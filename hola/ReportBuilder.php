@@ -1,4 +1,6 @@
 <?php
+require_once 'DataAccessObjects.php';
+
 class ReportBuilder {
     private $conn;
     private $salesDao;
@@ -7,7 +9,6 @@ class ReportBuilder {
 
     public function __construct($db) {
         $this->conn = $db;
-        // Instanciamos las clases DAO para ventas, clientes y productos
         $this->salesDao = new SalesDao($this->conn);
         $this->clientsDao = new ClientsDao($this->conn);
         $this->productsDao = new ProductsDao($this->conn);
