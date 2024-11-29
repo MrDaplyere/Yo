@@ -163,6 +163,6 @@ public function searchProducts($term) {
     return $result;
 }
     }
-}
+
 
 ?>
