@@ -14,9 +14,9 @@ if (!$data) {
 
 $producto = $data->producto;
 $cliente = $data->cliente;
-$precio = $data->precio;
+$revendedor = $data->revendedor; // Cambié 'precio' por 'revendedor'
 
-if (empty($producto) || empty($cliente) || empty($precio)) {
+if (empty($producto) || empty($cliente) || empty($revendedor)) { // Cambié 'precio' por 'revendedor'
     echo json_encode(['success' => false, 'message' => 'Los campos cliente y producto son obligatorios.']);
     exit;
 }
@@ -28,11 +28,11 @@ try {
     $conn = $db->getConnection();
 
     // Inserción de datos
-    $query = "INSERT INTO ventas (producto, cliente, precio) VALUES (?, ?, ?)";
+    $query = "INSERT INTO ventas (producto, cliente, revendedor) VALUES (?, ?, ?)"; // Cambié 'precio' por 'revendedor'
     $stmt = $conn->prepare($query);
     $stmt->bindParam(1, $producto);
     $stmt->bindParam(2, $cliente);
-    $stmt->bindParam(3, $precio);
+    $stmt->bindParam(3, $revendedor); // Cambié 'precio' por 'revendedor'
 
     if ($stmt->execute()) {
         echo json_encode(['success' => true, 'message' => 'Venta insertada correctamente.']);
