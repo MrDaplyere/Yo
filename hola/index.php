@@ -195,10 +195,6 @@ $reportData = $reportFacade->getSalesReport();
     </form>
 </div>
 <div>
-<form id="sales-form">
-    <label for="cliente">Cliente:</label>
-    <input type="text" id="cliente" placeholder="Escribe un cliente">
-    <div id="client-list"></div>
 <form id="sales-form" class="p-4">
     <div class="mb-3">
         <label for="cliente" class="form-label">Cliente:</label>
@@ -206,23 +202,17 @@ $reportData = $reportFacade->getSalesReport();
         <div id="client-list" class="list-group mt-2"></div>
     </div>
 
-    <label for="producto">Producto:</label>
-    <input type="text" id="producto" placeholder="Escribe un producto">
-    <div id="product-list"></div>
     <div class="mb-3">
         <label for="producto" class="form-label">Producto:</label>
         <input type="text" id="producto" class="form-control" placeholder="Escribe un producto">
         <div id="product-list" class="list-group mt-2"></div>
     </div>
 
-    <label for="precio">Precio:</label>
-    <input type="text" id="price" readonly>
     <div class="mb-3">
         <label for="precio" class="form-label">Precio:</label>
         <input type="text" id="price" class="form-control" readonly>
     </div>
 
-    <button type="button" id="insert-button">Insertar</button>
     <button type="button" id="insert-button" class="btn btn-primary">Insertar</button>
 </form>
 <div id="insert-status"></div>
