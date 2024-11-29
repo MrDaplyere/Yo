@@ -1,4 +1,7 @@
 <?php
+require_once 'Database.php';
+require_once 'ReportBuilder.php';
+require_once 'SalesReportFacade.php'; // Incluir la fachada
 // Verifica qué datos se están recuperando
 var_dump($productData);
 $database = new Database();
