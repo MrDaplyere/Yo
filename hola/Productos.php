@@ -18,6 +18,7 @@ try {
 } catch (PDOException $e) {
     echo "Error al listar las tablas: " . $e->getMessage();
 }
+
 // Crear la conexión a la base de datos
 $database = new Database();
 $db = $database->getConnection();
@@ -152,13 +153,18 @@ $productData = $reportFacade->getProductsReport();
     <?php
     if (!empty($productData)) {
         foreach ($productData as $row) {
+            // Verificar si las claves existen antes de usarlas
+            $nombreProducto = isset($row['NombreProducto']) ? htmlspecialchars($row['NombreProducto']) : 'No disponible';
+            $precio = isset($row['Precio']) ? htmlspecialchars($row['Precio']) : 'No disponible';
+            $revendedor = isset($row['Revendedor']) ? htmlspecialchars($row['Revendedor']) : 'No disponible';
+
             echo "<tr>
-                <td>" . htmlspecialchars($row['NombreProducto']) . "</td>
-                <td>" . htmlspecialchars($row['Precio']) . "</td>
-                <td>" . htmlspecialchars($row['Revendedor']) . "</td>
+                <td>$nombreProducto</td>
+                <td>$precio</td>
+                <td>$revendedor</td>
                 <td class='table-actions'>
                     <button class='btn btn-danger btn-sm' data-toggle='modal' data-target='#deleteModal' data-id='" . htmlspecialchars($row['id_producto']) . "'>Eliminar</button>
-<button class='btn btn-warning btn-sm' data-toggle='modal' data-target='#editModal' data-id='" . htmlspecialchars($row['id_producto']) . "' data-nombre='" . htmlspecialchars($row['NombreProducto']) . "' data-precio='" . htmlspecialchars($row['Precio']) . "' data-revendedor='" . htmlspecialchars($row['Revendedor']) . "'>Modificar</button>
+                    <button class='btn btn-warning btn-sm' data-toggle='modal' data-target='#editModal' data-id='" . htmlspecialchars($row['id_producto']) . "' data-nombre='" . $nombreProducto . "' data-precio='" . $precio . "' data-revendedor='" . $revendedor . "'>Modificar</button>
                 </td>
             </tr>";
         }
@@ -238,16 +244,13 @@ $productData = $reportFacade->getProductsReport();
     </div>
 </div>
 
-
-
-
 <!-- Modal para Eliminar -->
 <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="deleteModalLabel">Eliminar Producto</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -265,53 +268,33 @@ $productData = $reportFacade->getProductsReport();
     </div>
 </div>
 
-<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
 <script>
-$('#editModal').on('show.bs.modal', function (event) {
-    var button = $(event.relatedTarget); 
-    var productId = button.data('id');
-    var productName = button.data('nombre');
-    var productPrice = button.data('precio');
-    var productReseller = button.data('revendedor');
-
-    console.log("ID:", productId);
-    console.log("Nombre:", productName);
-    console.log("Precio:", productPrice);
-    console.log("Revendedor:", productReseller);
-
-    $(this).find('#update_id').val(productId);
-    $(this).find('#update_nombre').val(productName);
-    $(this).find('#update_precio').val(productPrice);
-    $(this).find('#update_revendedor').val(productReseller);
-});
-
-$(document).ready(function () {
-    $('#deleteModal').on('show.bs.modal', function (event) {
-        var button = $(event.relatedTarget); 
-        var productId = button.data('id'); 
-        $(this).find('#delete_id').val(productId);
-    });
-
     $('#editModal').on('show.bs.modal', function (event) {
-        var button = $(event.relatedTarget); 
-        var productId = button.data('id');
-        var productName = button.data('nombre');
-        var productPrice = button.data('precio');
-        var productReseller = button.data('revendedor');
-
-        $(this).find('#update_id').val(productId);
-        $(this).find('#update_nombre').val(productName);
-        $(this).find('#update_precio').val(productPrice);
-        $(this).find('#update_revendedor').val(productReseller);
+        var button = $(event.relatedTarget);
+        var id = button.data('id');
+        var nombre = button.data('nombre');
+        var precio = button.data('precio');
+        var revendedor = button.data('revendedor');
+        
+        var modal = $(this);
+        modal.find('#update_id').val(id);
+        modal.find('#update_nombre').val(nombre);
+        modal.find('#update_precio').val(precio);
+        modal.find('#update_revendedor').val(revendedor);
     });
-});
 
+    $('#deleteModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget);
+        var id = button.data('id');
+        
+        var modal = $(this);
+        modal.find('#delete_id').val(id);
+    });
 </script>
 
-
 </body>
-
 </html>
