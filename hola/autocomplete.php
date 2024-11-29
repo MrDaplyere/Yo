@@ -7,55 +7,60 @@ $database = new Database();
 $db = $database->getConnection();
 $salesReportFacade = new SalesReportFacade($db);
 
-header('Content-Type: application/json');  // Asegura que la respuesta sea en formato JSON
+if (isset($_GET['term']) && isset($_GET['type'])) {
+    $term = $_GET['term'];
+    $type = $_GET['type'];
 
-try {
-    if (isset($_GET['term']) && isset($_GET['type'])) {
-        $term = $_GET['term'];
-        $type = $_GET['type'];
-
-        // Búsqueda de productos
-        if ($type === 'product') {
-            $products = $salesReportFacade->getProductsReport();
-
-            // Filtrar productos según el término buscado
-            $filteredProducts = array_filter($products, function($product) use ($term) {
-                return stripos($product['NombreProducto'], $term) !== false;
-            });
-
-            echo json_encode(array_values($filteredProducts));  // Respuesta en JSON
-        }
-        // Búsqueda de clientes
-        elseif ($type === 'client') {
-            $clients = $salesReportFacade->getClientsReport();
-
-            // Filtrar clientes según el término buscado
-            $filteredClients = array_filter($clients, function($client) use ($term) {
-                return stripos($client['Nombre'], $term) !== false;
-            });
-
-            echo json_encode(array_values($filteredClients));  // Respuesta en JSON
-        }
-    }
-    // Obtener el precio de un producto por su ID
-    elseif (isset($_GET['action']) && $_GET['action'] === 'get_price' && isset($_GET['id'])) {
-        $productId = $_GET['id'];
+    // Búsqueda de productos
+    if ($type === 'product') {
+        // Obtener todos los productos
         $products = $salesReportFacade->getProductsReport();
 
-        $productFound = false;
-        foreach ($products as $product) {
-            if ($product['id_producto'] == $productId) {
-                $productFound = true;
-                echo json_encode(['precio' => $product['Precio']]);  // Respuesta JSON con precio
-                break;
-            }
-        }
+        // Verificar si los productos tienen la estructura esperada
+        if ($products) {
+            // Filtrar productos según el término buscado
+            $filteredProducts = array_filter($products, function($product) use ($term) {
+                // Asegurarse de que 'NombreProducto' existe y no es null
+                return isset($product['NombreProducto']) && stripos($product['NombreProducto'], $term) !== false;
+            });
 
-        if (!$productFound) {
-            echo json_encode(['precio' => '']);  // Si no se encuentra el producto
+            // Devolver los productos filtrados como JSON
+            echo json_encode(array_values($filteredProducts));
+        } else {
+            echo json_encode([]); // Si no hay productos, devolver un arreglo vacío
         }
     }
-} catch (Exception $e) {
-    echo json_encode(['error' => 'Hubo un problema en el servidor: ' . $e->getMessage()]);
+    // Búsqueda de clientes
+    elseif ($type === 'client') {
+        // Obtener todos los clientes
+        $clients = $salesReportFacade->getClientsReport();
+
+        // Filtrar clientes según el término buscado
+        $filteredClients = array_filter($clients, function($client) use ($term) {
+            return stripos($client['Nombre'], $term) !== false;
+        });
+
+        // Devolver los clientes filtrados como JSON
+        echo json_encode(array_values($filteredClients));
+    }
+}
+// Obtener el precio de un producto por su ID
+elseif (isset($_GET['action']) && $_GET['action'] === 'get_price' && isset($_GET['id'])) {
+    $productId = $_GET['id'];
+
+    // Obtener todos los productos
+    $products = $salesReportFacade->getProductsReport();
+
+    // Buscar el producto con el id proporcionado
+    foreach ($products as $product) {
+        if ($product['id_producto'] == $productId) {
+            // Si el producto se encuentra, devolver su precio
+            echo json_encode(['precio' => $product['Precio']]);
+            exit;
+        }
+    }
+
+    // Si no se encuentra el producto, devolver un precio vacío
+    echo json_encode(['precio' => '']);
 }
 ?>
