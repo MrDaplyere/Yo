@@ -412,21 +412,18 @@ $reportData = $reportFacade->getSalesReport();
     // Configurar autocompletado para clientes
     setupAutocomplete('cliente', 'client-list', 'client');
 
-   document.getElementById('insert-button').addEventListener('click', function () {
+document.getElementById('insert-button').addEventListener('click', function () {
     const productoInput = document.getElementById('producto');
     const clienteInput = document.getElementById('cliente');
     const priceInput = document.getElementById('price');
-
-    if (!productoInput || !clienteInput || !priceInput) {
-        console.error('Uno o más elementos no existen en el DOM.');
-        return;
-    }
 
     const producto = productoInput.value;
     const cliente = clienteInput.value;
     const precio = priceInput.value;
 
     // Verifica que los valores no estén vacíos antes de continuar
+    console.log('Producto:', producto, 'Cliente:', cliente, 'Precio:', precio);
+
     if (!producto || !cliente || !precio) {
         alert('Por favor, complete todos los campos antes de insertar.');
         return;
@@ -451,8 +448,6 @@ $reportData = $reportFacade->getSalesReport();
         })
         .catch(err => console.error('Error al insertar la venta:', err));
 });
-
-
 </script>
 </body>
 </html>
