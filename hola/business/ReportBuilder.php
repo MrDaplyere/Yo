@@ -1,6 +1,6 @@
 <?php
 // Incluyendo la clase Database desde la capa de acceso a datos
-include_once '../data/Database.php';
+include_once(__DIR__ . '/../data/Database.php');
 
 class ReportBuilder {
     private $conn;
