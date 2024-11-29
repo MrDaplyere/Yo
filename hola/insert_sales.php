@@ -14,38 +14,31 @@ if (!$data) {
 
 $producto = $data->producto ?? null;
 $cliente = $data->cliente ?? null;
-$fecha = $data->fecha ?? null; // Verifica si `fecha` existe, de lo contrario asigna null
 
-if (empty($producto) || empty($cliente) || empty($fecha)) {
-    echo json_encode(['success' => false, 'message' => 'Los campos cliente, producto y fecha son obligatorios.']);
+// Validar datos requeridos
+if (empty($producto) || empty($cliente)) {
+    echo json_encode(['success' => false, 'message' => 'Los campos cliente y producto son obligatorios.']);
     exit;
 }
 
-// Verificar que la fecha esté en el formato correcto
-if (!DateTime::createFromFormat('Y-m-d', $fecha)) {
-    echo json_encode(['success' => false, 'message' => 'La fecha no tiene el formato correcto.']);
-    exit;
-}
-
-// Aquí realizamos la conexión y la inserción
+// Incluir e inicializar la fachada
 try {
     include_once 'Database.php';
-    $db = new Database(); // Tu clase de base de datos
+    include_once 'SalesReportFacade.php';
+
+    $db = new Database(); // Instancia de tu clase de conexión
     $conn = $db->getConnection();
+    $reportFacade = new SalesReportFacade($conn); // Crear instancia de la fachada
 
-    // Inserción de datos
-    $query = "INSERT INTO ventas (producto, cliente, fecha) VALUES (?, ?, ?)";
-    $stmt = $conn->prepare($query);
-    $stmt->bindParam(1, $producto);
-    $stmt->bindParam(2, $cliente);
-    $stmt->bindParam(3, $fecha);
+    // Llamar al método para insertar la venta
+    $resultado = $reportFacade->insertSale($cliente, $producto);
 
-    if ($stmt->execute()) {
+    if ($resultado) {
         echo json_encode(['success' => true, 'message' => 'Venta insertada correctamente.']);
     } else {
         echo json_encode(['success' => false, 'message' => 'Error al insertar en la base de datos.']);
     }
-} catch (PDOException $e) {
-    echo json_encode(['success' => false, 'message' => 'Error de base de datos: ' . $e->getMessage()]);
+} catch (Exception $e) {
+    echo json_encode(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
 }
 ?>
