@@ -1,7 +1,13 @@
 <?php
 // Verifica qué datos se están recuperando
 var_dump($productData);
-
+$database = new Database();
+$conn = $database->getConnection();
+if ($conn) {
+    echo "Conexión exitosa.";
+} else {
+    echo "Error en la conexión.";
+}
 require_once 'Database.php';
 require_once 'ReportBuilder.php';
 require_once 'SalesReportFacade.php'; // Incluir la fachada
