@@ -412,43 +412,46 @@ $reportData = $reportFacade->getSalesReport();
     // Configurar autocompletado para clientes
     setupAutocomplete('cliente', 'client-list', 'client');
 
-    document.getElementById('insert-sale').addEventListener('click', function() {
-    const cliente = document.getElementById('cliente').value;
-    const producto = document.getElementById('producto').value;
-    const precio = document.getElementById('precio').value;
+   document.getElementById('insert-button').addEventListener('click', function () {
+    const productoInput = document.getElementById('producto');
+    const clienteInput = document.getElementById('cliente');
+    const priceInput = document.getElementById('price');
 
-    if (!cliente || !producto) {
-        alert("Por favor, selecciona un cliente y un producto.");
+    if (!productoInput || !clienteInput || !priceInput) {
+        console.error('Uno o más elementos no existen en el DOM.');
         return;
     }
 
-    const formData = new FormData();
-    formData.append('cliente', cliente);
-    formData.append('producto', producto);
-    formData.append('precio', precio);
+    const producto = productoInput.value;
+    const cliente = clienteInput.value;
+    const precio = priceInput.value;
 
-    fetch('insert_sale.php', {
+    // Verifica que los valores no estén vacíos antes de continuar
+    if (!producto || !cliente || !precio) {
+        alert('Por favor, complete todos los campos antes de insertar.');
+        return;
+    }
+
+    fetch('insert_sales.php', {
         method: 'POST',
-        body: formData
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ producto, cliente, precio })
     })
         .then(response => response.json())
         .then(data => {
-            const statusDiv = document.getElementById('insert-status');
             if (data.success) {
-                statusDiv.innerText = 'Venta insertada correctamente.';
-                statusDiv.style.color = 'green';
-
-                // Limpia los campos después de insertar
-                document.getElementById('cliente').value = '';
-                document.getElementById('producto').value = '';
-                document.getElementById('precio').value = '';
+                alert('Venta insertada correctamente.');
+                // Opcional: limpiar los inputs
+                productoInput.value = '';
+                clienteInput.value = '';
+                priceInput.value = '';
             } else {
-                statusDiv.innerText = `Error al insertar la venta: ${data.message}`;
-                statusDiv.style.color = 'red';
+                alert('Error al insertar la venta: ' + data.message);
             }
         })
-        .catch(err => console.error('Error:', err));
+        .catch(err => console.error('Error al insertar la venta:', err));
 });
+
 
 </script>
 </body>
