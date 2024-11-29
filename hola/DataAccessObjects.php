@@ -150,14 +150,18 @@ class ProductsDao {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function searchProducts($term) {
-        $query = "SELECT id_producto, NombreProducto FROM " . $this->table . " WHERE NombreProducto LIKE :term LIMIT 10";
-        $stmt = $this->conn->prepare($query);
-        $searchTerm = "%" . $term . "%";
-        $stmt->bindParam(':term', $searchTerm);
-        $stmt->execute();
+public function searchProducts($term) {
+    error_log("Searching for: " . $term); // Depuración: Verifica qué valor tiene $term
+    $query = "SELECT id_producto, NombreProducto FROM " . $this->table . " WHERE NombreProducto LIKE :term LIMIT 10";
+    $stmt = $this->conn->prepare($query);
+    $searchTerm = "%" . $term . "%";
+    $stmt->bindParam(':term', $searchTerm);
+    $stmt->execute();
 
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    error_log("Search result: " . print_r($result, true)); // Depuración: Muestra los resultados
+    return $result;
+}
     }
 }
 
