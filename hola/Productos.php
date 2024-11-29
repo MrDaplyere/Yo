@@ -1,9 +1,12 @@
 <?php
-var_dump($productData); // Verifica qué datos se están recuperando
+// Verifica qué datos se están recuperando
+var_dump($productData);
 
 require_once 'Database.php';
 require_once 'ReportBuilder.php';
 require_once 'SalesReportFacade.php'; // Incluir la fachada
+
+// Crear la conexión a la base de datos
 $database = new Database();
 $conn = $database->getConnection();
 
