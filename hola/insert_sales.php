@@ -14,9 +14,16 @@ if (!$data) {
 
 $producto = $data->producto;
 $cliente = $data->cliente;
+$fecha = $data->fecha; // Asegúrate de que se recibe una fecha en formato 'YYYY-MM-DD'
 
-if (empty($producto) || empty($cliente)) {
-    echo json_encode(['success' => false, 'message' => 'Los campos cliente y producto son obligatorios.']);
+if (empty($producto) || empty($cliente) || empty($fecha)) {
+    echo json_encode(['success' => false, 'message' => 'Los campos cliente, producto y fecha son obligatorios.']);
+    exit;
+}
+
+// Verificar que la fecha esté en el formato correcto
+if (!DateTime::createFromFormat('Y-m-d', $fecha)) {
+    echo json_encode(['success' => false, 'message' => 'La fecha no tiene el formato correcto.']);
     exit;
 }
 
@@ -26,22 +33,19 @@ try {
     $db = new Database(); // Tu clase de base de datos
     $conn = $db->getConnection();
 
-    // Preparar la consulta SQL para insertar los datos en la tabla 'ventas'
-    $query = "INSERT INTO ventas (producto, cliente) VALUES (?, ?)";
+    // Inserción de datos
+    $query = "INSERT INTO ventas (producto, cliente, fecha) VALUES (?, ?, ?)";
     $stmt = $conn->prepare($query);
-
-    // Vincular los parámetros
     $stmt->bindParam(1, $producto);
     $stmt->bindParam(2, $cliente);
+    $stmt->bindParam(3, $fecha);
 
-    // Ejecutar la consulta y verificar si fue exitosa
     if ($stmt->execute()) {
         echo json_encode(['success' => true, 'message' => 'Venta insertada correctamente.']);
     } else {
         echo json_encode(['success' => false, 'message' => 'Error al insertar en la base de datos.']);
     }
 } catch (PDOException $e) {
-    // Capturar cualquier error de base de datos y mostrarlo
     echo json_encode(['success' => false, 'message' => 'Error de base de datos: ' . $e->getMessage()]);
 }
 ?>
