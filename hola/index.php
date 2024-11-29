@@ -207,7 +207,7 @@ $reportData = $reportFacade->getSalesReport();
     <label for="precio">Precio:</label>
     <input type="text" id="price" readonly>
 
-    <button type="button" id="insert-sale">Insertar</button>
+    <button type="button" id="insert-button">Insertar</button>
 </form>
 <div id="insert-status"></div>
 
