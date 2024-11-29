@@ -5,7 +5,6 @@ require_once __DIR__ . '/../business/SalesReportFacade.php';
 require_once __DIR__ . '/../data/Database.php';
 require_once __DIR__ . '/../business/JSONReportStrategy.php';
 require_once __DIR__ . '/../business/PDFReportStrategy.php';
-require_once __DIR__ . '/../business/HtmlReportStrategy.php';
 
 class Presentador {
     private $reportFacade;
@@ -28,8 +27,6 @@ class Presentador {
             $this->reportFacade->setReportStrategy(new JsonReportStrategy());
         } elseif ($format === 'pdf') {
             $this->reportFacade->setReportStrategy(new PdfReportStrategy());
-        } elseif ($format === 'html') {
-            $this->reportFacade->setReportStrategy(new HtmlReportStrategy());
         }
 
         return $this->reportFacade->generateSalesReport();
