@@ -1,7 +1,7 @@
- # Usa una imagen base de PHP con Apache
+# Usa una imagen base de PHP con Apache
 FROM php:8.2-apache
 
-# Copia los archivos del proyecto al directorio raíz del servidor
+# Copia todos los archivos desde la carpeta actual al contenedor en /var/www/html
 COPY . /var/www/html/
 
 # Establece permisos para asegurar que Apache pueda acceder a los archivos
