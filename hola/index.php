@@ -151,30 +151,30 @@ $reportData = $reportFacade->getSalesReport();
         }
         <style>
 /* Estilo para el contenedor de la lista */
-#product-list, #client-list {
-    position: absolute;
-    border: 1px solid #ccc;
-    background-color: #fff;
-    max-height: 200px;
-    overflow-y: auto;
-    width: calc(100% - 2px);
-    z-index: 1000;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
+ #product-list, #client-list {
+        position: absolute;
+        border: 1px solid #ccc;
+        background-color: #fff;
+        max-height: 200px;
+        overflow-y: auto;
+        width: calc(100% - 2px);
+        z-index: 1000;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
 
-/* Estilo para cada opción de la lista */
-#product-list div, #client-list div {
-    padding: 10px;
-    cursor: pointer;
-    font-size: 14px;
-    color: #333;
-}
+    /* Estilo para cada opción de la lista */
+    #product-list div, #client-list div {
+        padding: 10px;
+        cursor: pointer;
+        font-size: 14px;
+        color: #333;
+    }
 
-/* Cambio de color al pasar el ratón por encima */
-#product-list div:hover, #client-list div:hover {
-    background-color: #f0f0f0;
-    color: #000;
-}
+    /* Cambio de color al pasar el ratón por encima */
+    #product-list div:hover, #client-list div:hover {
+        background-color: #f0f0f0;
+        color: #000;
+    }
 </style>
 
     </style>
